@@ -13,17 +13,6 @@ axios.get('https://api.github.com/users/etridgely')
   const cardInfo = githubCard(myInfo)
   cardPlace.appendChild(cardInfo)
 })
-// promise
-//   .then((response) => {
-//     console.log(response)
-//     response.data.forEach( item => {
-//       let newCard = githubCard(item)
-//       cardPlace.appendChild(newCard)
-//     })
-//   })
-//   .catch((err) => {
-//     console.log(err)
-//   })
 
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
@@ -61,8 +50,8 @@ followersArray.forEach(user => {
     const card = githubCard(data.data)
     const cards = document.querySelector(`.cards`)
     cards.appendChild(card)
+  })
 })
-
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
 
@@ -82,6 +71,7 @@ followersArray.forEach(user => {
 </div>
 
 */
+const cards = document.querySelector(`.cards`)
 function githubCard(obj){
 
   const card = document.createElement('div');
