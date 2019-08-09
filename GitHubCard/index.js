@@ -95,31 +95,31 @@ function githubCard(obj){
   //append
   card.appendChild(cardImg);
   card.appendChild(cardInfo);
-  card.appendChild(cardTitle);
-  card.appendChild(cardUser);
-  card.appendChild(location);
-  card.appendChild(userProfile);
-  card.appendChild(userProfileUrl);
-  card.appendChild(userFollower);
-  card.appendChild(userFollowing);
-  card.appendChild(userBio);
+  cardInfo.appendChild(cardTitle);
+  cardInfo.appendChild(cardUser);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(userProfile);
+  userProfile.appendChild(userProfileUrl);
+  cardInfo.appendChild(userFollower);
+  cardInfo.appendChild(userFollowing);
+  cardInfo.appendChild(userBio);
 
   cardImg.src = obj.avatar_url
   cardTitle.textContent = obj.name
-  location.textContent = obj.location
+  location.textContent = `Location: ${obj.location}`
   cardUser.textContent = obj.login
   const userProfileActual = obj.url
-  userProfileUrl.innerHTML = userProfileActual.link(obj.url)
+  userProfileUrl.textContent = "Profile: "
+  userProfileUrl.innerHTML += userProfileActual.link(obj.url)
   userFollower.textContent = `Followers: ${obj.followers}`
   userFollowing.textContent = `Following: ${obj.following}`
-  userBio.textContent = obj.bio
+  userBio.textContent = `Bio: ${obj.bio}`
   
   userProfileUrl.src = obj
 
 
   return card;
 }
-
 
 /* List of LS Instructors Github username's: 
   tetondan
@@ -128,3 +128,17 @@ function githubCard(obj){
   luishrd
   bigknell
 */
+
+axios.get('https://api.github.com/users/etridgely/followers')
+  .then( followers => {
+    
+    followers.data.forEach(user => {
+      axios.get(user.url)
+      .then (response => {
+        const followerCard = githubCard(response.data);
+        const cards = document.querySelector(`.cards`);
+        cards.appendChild(followerCard)
+      })
+    })
+
+  })
