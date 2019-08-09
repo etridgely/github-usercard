@@ -1,7 +1,18 @@
 /* Step 1: using axios, send a GET request to the following URL 
-           (replacing the palceholder with your Github name):
+           (replacing the placeholder with your Github name):
            https://api.github.com/users/<your name>
 */
+
+axios.get('https://api.github.com/users/etridgely')
+  .then (data => {
+    console.log('data: ', data)
+    const myInfo = data.data;
+    console.log('UserInfo: ', myInfo)
+
+  const cardPlace = document.querySelector('.cards');
+  const cardInfo = githubCard(myInfo)
+  cardPlace.appendChild(cardInfo)
+})
 
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
@@ -24,8 +35,23 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
 
+  `tetondan`,
+  `dustinmyers`,
+  `justsml`,
+  `luishrd`,
+  `bigknell`
+];
+
+followersArray.forEach(user => {
+  axios.get(`https://api.github.com/users/${user}`)
+  .then (data => {
+    const card = githubCard(data.data)
+    const cards = document.querySelector(`.cards`)
+    cards.appendChild(card)
+  })
+})
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
 
@@ -45,6 +71,55 @@ const followersArray = [];
 </div>
 
 */
+const cards = document.querySelector(`.cards`)
+function githubCard(obj){
+
+  const card = document.createElement('div');
+  const cardImg = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const cardTitle = document.createElement('h3');
+  const cardUser = document.createElement('p');
+  const location = document.createElement('p');
+  const userProfile = document.createElement('p');
+  const userProfileUrl = document.createElement('a');
+  const userFollower = document.createElement('p');
+  const userFollowing = document.createElement('p');
+  const userBio = document.createElement('p');
+
+  //classes
+  card.classList.add('card');
+  cardInfo.classList.add('card-info');
+  cardTitle.classList.add('name');
+  cardUser.classList.add('username');
+
+  //append
+  card.appendChild(cardImg);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(cardTitle);
+  cardInfo.appendChild(cardUser);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(userProfile);
+  userProfile.appendChild(userProfileUrl);
+  cardInfo.appendChild(userFollower);
+  cardInfo.appendChild(userFollowing);
+  cardInfo.appendChild(userBio);
+
+  cardImg.src = obj.avatar_url
+  cardTitle.textContent = obj.name
+  location.textContent = `Location: ${obj.location}`
+  cardUser.textContent = obj.login
+  const userProfileActual = obj.url
+  userProfileUrl.textContent = "Profile: "
+  userProfileUrl.innerHTML += userProfileActual.link(obj.url)
+  userFollower.textContent = `Followers: ${obj.followers}`
+  userFollowing.textContent = `Following: ${obj.following}`
+  userBio.textContent = `Bio: ${obj.bio}`
+  
+  userProfileUrl.src = obj
+
+
+  return card;
+}
 
 /* List of LS Instructors Github username's: 
   tetondan
@@ -53,3 +128,17 @@ const followersArray = [];
   luishrd
   bigknell
 */
+
+axios.get('https://api.github.com/users/etridgely/followers')
+  .then( followers => {
+    
+    followers.data.forEach(user => {
+      axios.get(user.url)
+      .then (response => {
+        const followerCard = githubCard(response.data);
+        const cards = document.querySelector(`.cards`);
+        cards.appendChild(followerCard)
+      })
+    })
+
+  })
